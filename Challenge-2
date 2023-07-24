@@ -1,0 +1,36 @@
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.compute import ComputeManagementClient
+import json
+
+# Azure subscription ID
+subscription_id = "<GoodLifeMedicals_Dev>"
+
+# Resource group name and VMSS name
+resource_group_name = "<GLM_DEV_RG_01>"
+vmss_name = "<USE1-VD-VMSS-01>"
+
+# Create an instance of DefaultAzureCredential class for authentication
+credential = DefaultAzureCredential()
+
+# Create a ComputeManagementClient using the credentials and subscription ID
+compute_client = ComputeManagementClient(credential, subscription_id)
+
+# Get VMSS metadata
+vmss = compute_client.virtual_machine_scale_sets.get(resource_group_name, vmss_name)
+
+# Extract relevant metadata from VMSS
+metadata = {
+    "id": vmss.id,
+    "name": vmss.name,
+    "location": vmss.location,
+    "sku": vmss.sku.name,
+    "capacity": vmss.sku.capacity,
+    "virtual_machine_profile": vmss.virtual_machine_profile,
+    # Add more metadata properties as needed
+}
+
+# Convert metadata to JSON format
+metadata_json = json.dumps(metadata, indent=4)
+
+# Output the metadata in JSON format
+print(metadata_json)
